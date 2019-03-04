@@ -1,12 +1,14 @@
-package dudukov.andrii.medicationsviewer.mainactivity;
+package dudukov.andrii.medicationsviewer.mainActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,11 +22,12 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import dudukov.andrii.medicationsviewer.R;
 import dudukov.andrii.medicationsviewer.api.models.Medicine;
-import dudukov.andrii.medicationsviewer.mainactivity.adapter.MedicineListAdapter;
-import dudukov.andrii.medicationsviewer.mainactivity.presenter.PresenterMainActivity;
-import dudukov.andrii.medicationsviewer.mainactivity.view.IMainActivity;
+import dudukov.andrii.medicationsviewer.descriptionActivity.DescriptionActivity;
+import dudukov.andrii.medicationsviewer.mainActivity.adapter.MedicineListAdapter;
+import dudukov.andrii.medicationsviewer.mainActivity.presenter.PresenterMainActivity;
+import dudukov.andrii.medicationsviewer.mainActivity.view.IMainActivity;
 
-public class MainActivity extends AppCompatActivity implements IMainActivity, OnQueryTextListener, View.OnAttachStateChangeListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements IMainActivity, OnQueryTextListener, View.OnAttachStateChangeListener, View.OnClickListener, AdapterView.OnItemClickListener {
 
     private SearchView searchView;
     private TextView tvConnectionError;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, On
     private ListView listMedicine;
     private PresenterMainActivity presenter;
     private MedicineListAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, On
         btnRetry = findViewById(R.id.button_retry);
         processBar.setVisibility(View.VISIBLE);
         btnRetry.setOnClickListener(this);
+        listMedicine.setOnItemClickListener(this);
 
-        presenter = PresenterMainActivity.getInstance(this);
-
+        presenter = new PresenterMainActivity(this);
 
        showMedicineList();
     }
@@ -54,15 +58,34 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, On
     private void showMedicineList() {
         if(isNetworkAvailable()){
             networkAvailable();
-            presenter.onActivityCreated();
+            presenter.getMedicineList();
         }
         else {
             networkNotAvailable();
         }
     }
 
+    private void networkAvailable() {
+        listMedicine.setVisibility(View.VISIBLE);
+        processBar.setVisibility(View.VISIBLE);
+        tvConnectionError.setVisibility(View.INVISIBLE);
+        btnRetry.setVisibility(View.INVISIBLE);
+    }
 
-    public boolean isNetworkAvailable() {
+    private void networkNotAvailable(){
+        listMedicine.setVisibility(View.INVISIBLE);
+        processBar.setVisibility(View.INVISIBLE);
+        tvConnectionError.setVisibility(View.VISIBLE);
+        btnRetry.setVisibility(View.VISIBLE);
+    }
+
+    private void startDescriptionActivity(Medicine selectedMedicine) {
+        Intent intent = new Intent(this, DescriptionActivity.class);
+        intent.putExtra("id", selectedMedicine.getId());
+        startActivity(intent);
+    }
+
+    private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -100,12 +123,29 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, On
     @Override
     public boolean onQueryTextSubmit(String query) {
 
-        presenter.searchInListMedicine(query);
+        if(isNetworkAvailable()) {
+            networkAvailable();
+            presenter.searchInListMedicine(query);
+        }
+        else {
+            networkNotAvailable();
+        }
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        if(newText.trim().length() == 0){
+            if(isNetworkAvailable()) {
+                networkAvailable();
+                presenter.searchInListMedicine(newText);
+            }
+            else {
+                networkNotAvailable();
+            }
+            return false;
+        }
+
         return false;
     }
 
@@ -116,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, On
     @Override
     public void onViewDetachedFromWindow(View v) {
         if(v.getId() == R.id.app_bar_search){
-            presenter.onActivityCreated();
+            presenter.getMedicineList();
         }
     }
 
@@ -129,17 +169,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, On
         }
     }
 
-    private void networkAvailable() {
-        listMedicine.setVisibility(View.VISIBLE);
-        processBar.setVisibility(View.VISIBLE);
-        tvConnectionError.setVisibility(View.INVISIBLE);
-        btnRetry.setVisibility(View.INVISIBLE);
-    }
-
-    private void networkNotAvailable(){
-        listMedicine.setVisibility(View.INVISIBLE);
-        processBar.setVisibility(View.INVISIBLE);
-        tvConnectionError.setVisibility(View.VISIBLE);
-        btnRetry.setVisibility(View.VISIBLE);
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Medicine selectedMedicine = (Medicine) parent.getItemAtPosition(position);
+        startDescriptionActivity(selectedMedicine);
     }
 }

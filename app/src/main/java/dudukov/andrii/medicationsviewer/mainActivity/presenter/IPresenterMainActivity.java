@@ -1,8 +1,8 @@
-package dudukov.andrii.medicationsviewer.mainactivity.presenter;
+package dudukov.andrii.medicationsviewer.mainActivity.presenter;
 
 public interface IPresenterMainActivity {
 
     void searchInListMedicine(String name);
-    void onActivityCreated();
+    void getMedicineList();
     void onDestroy();
 }

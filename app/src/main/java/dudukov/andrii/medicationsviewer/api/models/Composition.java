@@ -29,11 +29,11 @@ public class Composition {
         this.id = id;
     }
 
-    public String getDescroption() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescroption(String descroption) {
+    public void setDescription(String descroption) {
         this.description = descroption;
     }
 

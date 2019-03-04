@@ -1,9 +1,9 @@
-package dudukov.andrii.medicationsviewer.mainactivity.presenter;
+package dudukov.andrii.medicationsviewer.mainActivity.presenter;
 
 import dudukov.andrii.medicationsviewer.api.ContentAPI;
 import dudukov.andrii.medicationsviewer.api.response.MedicineList;
 import dudukov.andrii.medicationsviewer.api.retrofit.RetrofitClient;
-import dudukov.andrii.medicationsviewer.mainactivity.view.IMainActivity;
+import dudukov.andrii.medicationsviewer.mainActivity.view.IMainActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -12,26 +12,16 @@ import retrofit2.Retrofit;
 
 public class PresenterMainActivity implements IPresenterMainActivity {
 
-    private static PresenterMainActivity ourInstance;
     private Retrofit retrofit;
     private ContentAPI contentAPI;
     private CompositeDisposable compositeDisposable;
     private IMainActivity view;
 
-    private PresenterMainActivity(IMainActivity view) {
+    public PresenterMainActivity(IMainActivity view) {
         retrofit = RetrofitClient.getInstance();
         contentAPI = retrofit.create(ContentAPI.class);
         compositeDisposable = new CompositeDisposable();
         this.view = view;
-    }
-
-    public static PresenterMainActivity getInstance(IMainActivity view) {
-        if (ourInstance == null) {
-
-            ourInstance = new PresenterMainActivity(view);
-            return ourInstance;
-        }
-        return ourInstance;
     }
 
     @Override
@@ -48,7 +38,7 @@ public class PresenterMainActivity implements IPresenterMainActivity {
     }
 
     @Override
-    public void onActivityCreated() {
+    public void getMedicineList() {
 
         compositeDisposable.add(contentAPI.getMedicineList()
                 .subscribeOn(Schedulers.io())

@@ -1,9 +1,14 @@
 <resources>
-    <string name="app_name">Medications Viewer</string>
-    <string name="search">Пошук</string>
-    <string name="manufacturer_name">Назва\nвиробника:</string>
-    <string name="trade_label">Торгова\nмарка:</string>
+    <string name="app_name">Medication Viewer</string>
+    <string name="search">Search</string>
+    <string name="manufacturer_name">Manufacturer\nname:</string>
+    <string name="trade_label">Trade\nlabel:</string>
     <string name="not_specified">Не вказано</string>
-    <string name="btn_retry_text">Спробувати знову</string>
-    <string name="tv_connection_error_text">Відсутнє підключеня до інтернету</string>
+    <string name="btn_retry_text">Retry</string>
+    <string name="tv_connection_error_text">No connection to the Internet</string>
+    <string name="packaging_description">Packaging\ndescription:</string>
+    <string name="composition_description">Composition\ndescription:</string>
+    <string name="composition_inn">Composition\ninn:</string>
+    <string name="pharm_form">Pharm form:</string>
+    <string name="description_activity_title">Medicine</string>
 </resources>

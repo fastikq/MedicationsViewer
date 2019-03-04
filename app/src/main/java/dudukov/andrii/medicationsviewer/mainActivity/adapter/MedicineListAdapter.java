@@ -1,4 +1,4 @@
-package dudukov.andrii.medicationsviewer.mainactivity.adapter;
+package dudukov.andrii.medicationsviewer.mainActivity.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

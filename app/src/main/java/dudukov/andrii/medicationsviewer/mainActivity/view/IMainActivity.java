@@ -1,4 +1,4 @@
-package dudukov.andrii.medicationsviewer.mainactivity.view;
+package dudukov.andrii.medicationsviewer.mainActivity.view;
 
 import java.util.List;
 
